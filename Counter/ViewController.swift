@@ -9,36 +9,23 @@ import UIKit
 
 final class ViewController: UIViewController {
     
-    private var counter: Int = 0
-    
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var pluseButton: UIButton!
     @IBOutlet private weak var historyTextView: UITextView!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        counterLabel.text = "Значение счётчика: \(counter)"
-        historyTextView.text = "История изменений:\n"
-        pluseButton.tintColor = .red
-    }
-    
+
+    private var counter: Int = 0
+
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         return formatter
     }()
     
-    private func updateCounterLabel() {
+    override func viewDidLoad() {
+        super.viewDidLoad()
         counterLabel.text = "Значение счётчика: \(counter)"
-    }
-    
-    private func addToHistory(change: String) {
-        let currentDate = dateFormatter.string(from: Date())
-        let historyEntry = "[\(currentDate)]: \(change)\n"
-        historyTextView.text += historyEntry
-        
-        let bottom = NSRange(location: historyTextView.text.count - 1, length: 1)
-        historyTextView.scrollRangeToVisible(bottom)
+        historyTextView.text = "История изменений:\n"
+        pluseButton.tintColor = .red
     }
     
     @IBAction private func incrementCounter(_ sender: Any) {
@@ -61,6 +48,19 @@ final class ViewController: UIViewController {
         counter = 0
         updateCounterLabel()
         addToHistory(change: "значение сброшено")
+    }
+
+    private func updateCounterLabel() {
+        counterLabel.text = "Значение счётчика: \(counter)"
+    }
+    
+    private func addToHistory(change: String) {
+        let currentDate = dateFormatter.string(from: Date())
+        let historyEntry = "[\(currentDate)]: \(change)\n"
+        historyTextView.text += historyEntry
+        
+        let bottom = NSRange(location: historyTextView.text.count - 1, length: 1)
+        historyTextView.scrollRangeToVisible(bottom)
     }
 }
 
