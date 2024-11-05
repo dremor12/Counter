@@ -13,7 +13,17 @@ final class ViewController: UIViewController {
     @IBOutlet private weak var pluseButton: UIButton!
     @IBOutlet private weak var historyTextView: UITextView!
 
-    private var counter: Int = 0
+    private var counter: Int = 0 {
+        didSet {
+            UserDefaults.standard.set(counter, forKey: "counterValue")
+        }
+    }
+    
+    private var history: [String] = [] {
+        didSet {
+            UserDefaults.standard.set(history, forKey: "historyLog")
+        }
+    }
 
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -23,8 +33,19 @@ final class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let savedCounter = UserDefaults.standard.value(forKey: "counterValue") as? Int {
+            counter = savedCounter
+        }
+        
+        if let savedHistory = UserDefaults.standard.stringArray(forKey: "historyLog") {
+            history = savedHistory
+            historyTextView.text = "История изменений:\n" + history.joined(separator: "\n")
+        } else {
+            historyTextView.text = "История изменений:\n"
+        }
+
         counterLabel.text = "Значение счётчика: \(counter)"
-        historyTextView.text = "История изменений:\n"
         pluseButton.tintColor = .red
     }
     
@@ -57,10 +78,12 @@ final class ViewController: UIViewController {
     private func addToHistory(change: String) {
         let currentDate = dateFormatter.string(from: Date())
         let historyEntry = "[\(currentDate)]: \(change)\n"
-        historyTextView.text += historyEntry
+
+        history.append(historyEntry)
+
+        historyTextView.text = "История изменений:\n" + history.joined(separator: "\n")
         
         let bottom = NSRange(location: historyTextView.text.count - 1, length: 1)
         historyTextView.scrollRangeToVisible(bottom)
     }
 }
-
